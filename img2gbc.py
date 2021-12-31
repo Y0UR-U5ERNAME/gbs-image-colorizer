@@ -1,5 +1,5 @@
 # a tool to convert colorful pictures to GB Studio-compatible colorized backgrounds
-# made by NalaFala/Yousurname/Y0UR-USERNAME
+# made by NalaFala/Yousurname/Y0UR-U5ERNAME
 # Pillow library required (py -m pip install Pillow)
 # works better on some images than others depending on the method used
 # not intended to be used on grayscale images or images with not many colors
