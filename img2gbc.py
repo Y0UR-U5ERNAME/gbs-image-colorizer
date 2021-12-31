@@ -43,7 +43,7 @@ def realpal(i): # to prevent using pure black
     palimage.putpalette(flat(getcols(i)) * 64)
     return palimage
 
-rgb2hex = lambda x: '#%02x%02x%02x' % x
+rgb2hex = lambda x: '%02x%02x%02x' % x
 
 flat = lambda z: [x for y in z for x in y]
 
