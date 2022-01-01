@@ -50,8 +50,8 @@ flat = lambda z: [x for y in z for x in y]
 
 # program start
 file = input('File Location: ')
-method = input('Method (A, B, or C): ').upper()
-if method not in ['A', 'B', 'C']: method = 'A'; print('Defaulting to method A')
+method = input('Method (A, B, C, D, or E): ').upper()
+if method not in ['A', 'B', 'C', 'D', 'E']: method = 'A'; print('Defaulting to method A')
 
 start = time.time()
 
@@ -75,69 +75,85 @@ with Image.open(file) as im:
     # natural selection (closest palettes get merged)
     tilegroups = [] # replace with [[i] for i in range(360)] and delete round 1 to go directly to round 2
     
-    # round 1 (tile x tile)
-    for t in sorted([[c, sorted([[c2, paldist(i, j)] for c2, j in enumerate(tiles4)], key=i1)[1]] for c, i in enumerate(tiles4)], key=i1):
-        s = t[0]
-        m = t[1][0]
-        if True in [s in i for i in tilegroups]: # already in a group
-            pass
-        elif True in [m in i for i in tilegroups]: # mate is already in a group
-            tilegroups[[m in i for i in tilegroups].index(True)].append(s)
-        else:
-            tilegroups.append([s, m])
-    
-    print('Done with round 1')
+    if method in 'DE':
+        # choose 8 tiles whose palettes are farthest from each other
+        tilegroups = sorted(flat([[([c, c2], paldist(i, j)) for c2, j in enumerate(tiles4) if j != i] for c, i in enumerate(tiles4)]), key=i1)[-1][0]
+        for i in range(6): tilegroups.append(sorted([(x, min([paldist(tiles4[j], tiles4[x]) for j in tilegroups])) for x in range(360) if x not in tilegroups], key=i1)[-1][0])
+        
+        print('Done with round 1')
+        
+        tilegroups = [[i] for i in tilegroups]
 
-    moved = []
+        # put all other tiles in the group of the nearest palette
+        for i in range(360):
+            if i not in flat(tilegroups):
+                tilegroups[sorted([(c, paldist(tiles4[j[0]] if method == 'E' else groupimg(j), tiles4[i])) for c, j in enumerate(tilegroups)], key=i1)[0][0]].append(i)
 
-    while len(tilegroups) > 8:
-        # round 2 (group x tile)
+        print('Done with round 2')
+    else:
+        # round 1 (tile x tile)
+        for t in sorted([[c, sorted([[c2, paldist(i, j)] for c2, j in enumerate(tiles4)], key=i1)[1]] for c, i in enumerate(tiles4)], key=i1):
+            s = t[0]
+            m = t[1][0]
+            if True in [s in i for i in tilegroups]: # already in a group
+                pass
+            elif True in [m in i for i in tilegroups]: # mate is already in a group
+                tilegroups[[m in i for i in tilegroups].index(True)].append(s)
+            else:
+                tilegroups.append([s, m])
+        
+        print('Done with round 1')
 
-        if method in 'AB':
-            tilegroups.sort(key=len)
+        #moved = []
 
-            tg = tilegroups[1:]
+        while len(tilegroups) > 8:
+            # round 2 (group x tile)
 
-            # force tiles out of small groups until there are 8 groups, causes images to look blocky sometimes
-            for i in tilegroups[0]:                                 # method B is blockier but can have more accurate colors
-                tg.sort(key=lambda x: paldist(groupimg(x) if method == 'A' else realpal(groupimg(x)).convert('RGB'), tiles4[i].convert('RGB')))
-                tg[0].append(i)
-            
-            tilegroups = tg
-            print(len(tilegroups) - 8, 'cycles left')
-        else:
-            '''
-            incredibly slow method that stops at a certain number of groups
+            if method in 'AB':
+                tilegroups.sort(key=len)
 
-            tl = sorted(range(360), key=lambda x: min([paldist(tiles4[x], realpal(groupimg(i)).convert('RGB')) for i in [y for y in tilegroups if x not in y]]))
-            tl = [z for z in tl if z not in moved][0]
+                tg = tilegroups[1:]
 
-            moved.append(tl)
-            if len(moved) == 360: moved = []
+                # force tiles out of small groups until there are 8 groups, causes images to look blocky sometimes
+                for i in tilegroups[0]:                                 # method B is blockier but can have more accurate colors
+                    tg.sort(key=lambda x: paldist(groupimg(x) if method == 'A' else realpal(groupimg(x)).convert('RGB'), tiles4[i].convert('RGB')))
+                    tg[0].append(i)
+                
+                tilegroups = tg
+                print(len(tilegroups) - 8, 'cycles left')
+            elif method == 'C':
+                '''
+                incredibly slow method that stops at a certain number of groups
 
-            # put tiles in the closest group that is not their own
-            gr = sorted([[tilegroups.index(i), paldist(tiles4[tl], realpal(groupimg(i)).convert('RGB'))] for i in [y for y in tilegroups if tl not in y]], key=i1)[0][0]
-            tilegroups = [[j for j in i if j != tl] for i in tilegroups]
-            tilegroups[gr].append(tl)
+                tl = sorted(range(360), key=lambda x: min([paldist(tiles4[x], realpal(groupimg(i)).convert('RGB')) for i in [y for y in tilegroups if x not in y]]))
+                tl = [z for z in tl if z not in moved][0]
 
-            tilegroups = [i for i in tilegroups if i]
-            '''
+                moved.append(tl)
+                if len(moved) == 360: moved = []
 
-            # group x group, works better on images with less colors
-            tg = tilegroups.copy()
-            tilegroups.sort(key=lambda x: min([paldist(groupimg(x), groupimg(i)) for i in [y for y in tg if x not in y]]))
-            tl = tilegroups[0]
-            tilegroups = tilegroups[1:]
-            for i in tl:
-                tilegroups.sort(key=lambda x: paldist(groupimg(x), tiles4[i]))
-                tilegroups[0].append(i)
-               
-            #tilegroups.sort(key=lambda x: paldist(groupimg(x), groupimg(tl))) # doesn't work very well
-            #tilegroups[0] += tl
+                # put tiles in the closest group that is not their own
+                gr = sorted([[tilegroups.index(i), paldist(tiles4[tl], realpal(groupimg(i)).convert('RGB'))] for i in [y for y in tilegroups if tl not in y]], key=i1)[0][0]
+                tilegroups = [[j for j in i if j != tl] for i in tilegroups]
+                tilegroups[gr].append(tl)
 
-            print(len(tilegroups) - 8, 'cycles left')
-    
-    print('Done with round 2')
+                tilegroups = [i for i in tilegroups if i]
+                '''
+
+                # group x group, works better on images with less colors
+                tg = tilegroups.copy()
+                tilegroups.sort(key=lambda x: min([paldist(groupimg(x), groupimg(i)) for i in [y for y in tg if x not in y]]))
+                tl = tilegroups[0]
+                tilegroups = tilegroups[1:]
+                for i in tl:
+                    tilegroups.sort(key=lambda x: paldist(groupimg(x), tiles4[i]))
+                    tilegroups[0].append(i)
+
+                #tilegroups.sort(key=lambda x: paldist(groupimg(x), groupimg(tl)))
+                #tilegroups[0] += tl
+
+                print(len(tilegroups) - 8, 'cycles left')
+        
+        print('Done with round 2')
 
     print('Loading output images...')
 
@@ -169,7 +185,7 @@ with Image.open(file) as im:
 
     # output palette data
     for c, i in enumerate(tilegroups):
-        print(f'Palette {c + 1}:', '[' + ', '.join(['"' + rgb2hex(x[1]) + '"' for x in groupimg(i).getcolors()]) + ']')
+        print(f'Palette {c + 1}:', '["' + '", "'.join(([rgb2hex(x[1]) for x in groupimg(i).getcolors()] + ['000000']*3)[:4]) + '"]')
     
     # output colorization data
     for y in range(18):
