@@ -131,6 +131,9 @@ with Image.open(file) as im:
             for i in tl:
                 tilegroups.sort(key=lambda x: paldist(groupimg(x), tiles4[i]))
                 tilegroups[0].append(i)
+               
+            #tilegroups.sort(key=lambda x: paldist(groupimg(x), groupimg(tl))) # doesn't work very well
+            #tilegroups[0] += tl
 
             print(len(tilegroups) - 8, 'cycles left')
     
