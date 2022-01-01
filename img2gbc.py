@@ -169,7 +169,7 @@ with Image.open(file) as im:
 
     # output palette data
     for c, i in enumerate(tilegroups):
-        print(f'Palette {c + 1}: {[rgb2hex(x[1]) for x in groupimg(i).getcolors()]}')
+        print(f'Palette {c + 1}:', '[' + ', '.join(['"' + rgb2hex(x[1]) + '"' for x in groupimg(i).getcolors()]) + ']')
     
     # output colorization data
     for y in range(18):
