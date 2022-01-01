@@ -7,7 +7,7 @@ A tool to convert colorful pictures to GB Studio-compatible colorized background
 
 Run the program using the command `py img2gbc.py`. The program will ask for the file location of the image. It will resize the image to 160x144 and output a colorized image (note that the colors in this image are not 15-bit) and an uncolorized image (to use in GB Studio). It will also output palette and colorization data to paste into the project file.
 
-Results can vary depending on the image and method used. Method A is fast but can be inaccurate, method B is like method A but blockier and with more accurate colors, and method C works better on images with not many colors. You are welcome to help optimize the program or add more accurate methods that are less blocky.
+Results can vary depending on the image and method used. Method A is fast but can be inaccurate, method B is like method A but blockier and with more accurate colors, and method C is slow and works better on images with not many colors. You are welcome to help optimize the program or add more accurate methods that are less blocky.
 
 ## Examples
 |Input|Output|
