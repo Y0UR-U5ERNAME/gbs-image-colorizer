@@ -161,7 +161,7 @@ with Image.open(file) as im:
     g = Image.new('RGB', (160, 144))
     for i in tilegroups:
         for j in i:                           # without realpal here the image will have black pixels
-            g.paste(tiles[j].copy().quantize(4, palette=realpal(groupimg(i))), tuple([x * 8 for x in i2xy(j)]))
+            g.paste(tiles[j].copy().quantize(4, palette=realpal(groupimg(i))), tuple(x * 8 for x in i2xy(j)))
 
     #g.show()
 
@@ -172,7 +172,7 @@ with Image.open(file) as im:
             t = tiles[j].copy().quantize(4, palette=realpal(groupimg(i)))
             t.putpalette([224, 248, 207, 134, 192, 108, 48, 104, 80, 7, 24, 33] * 64, 'RGB')
             t = t.convert('RGB')
-            o.paste(t, tuple([x * 8 for x in i2xy(j)]))
+            o.paste(t, tuple(x * 8 for x in i2xy(j)))
     
     #o.show()
     
