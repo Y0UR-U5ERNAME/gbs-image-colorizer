@@ -77,6 +77,7 @@ with Image.open(file) as im:
     
     if method in 'DE':
         # choose 8 tiles whose palettes are farthest from each other
+        #tilegroups = [sorted([(c, min([paldist(i, j) for j in tiles4])) for c, i in enumerate(tiles4)], key=i1)[-1][0]] # find most unique tile palette (use range(7) instead of range(6))
         tilegroups = sorted(flat([[([c, c2], paldist(i, j)) for c2, j in enumerate(tiles4) if j != i] for c, i in enumerate(tiles4)]), key=i1)[-1][0]
         for i in range(6): tilegroups.append(sorted([(x, min([paldist(tiles4[j], tiles4[x]) for j in tilegroups])) for x in range(360) if x not in tilegroups], key=i1)[-1][0])
         
