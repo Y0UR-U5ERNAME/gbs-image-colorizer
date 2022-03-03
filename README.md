@@ -2,7 +2,7 @@
 A tool to convert colorful pictures to GB Studio-compatible colorized backgrounds. Made by NalaFala/Yousurname/Y0UR-U5ERNAME.
 
 ## Requirements
-- Python (install from https://www.python.org/downloads/)
+- Python 3.6+ (install from https://www.python.org/downloads/)
 - Pillow (install using the instructions [here](https://pillow.readthedocs.io/en/stable/installation.html))
 
 ## Instructions
