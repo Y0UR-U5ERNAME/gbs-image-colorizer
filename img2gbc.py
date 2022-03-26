@@ -5,7 +5,7 @@
 # not intended to be used on grayscale images or images with not many colors
 
 from PIL import Image
-from math import sqrt
+from math import dist
 import time
 
 # function definitions
@@ -15,11 +15,9 @@ def paldist(a, b):
     #p2 = (getcols(b)*4)[:4]
     p1 = getcols(a) # average method
     p2 = getcols(b)
-    cds = [min([coldist(i, j) for j in p2]) for i in p1]
+    cds = [min([dist(i, j) for j in p2]) for i in p1]
     #return sqrt(cds[0]**2 + cds[1]**2 + cds[2]**2 + cds[3]**2) # euclidean distance method
     return sum(cds) / len(cds) # average method
-
-coldist = lambda a, b: sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2 + (a[2] - b[2])**2)
 
 i2xy = lambda i: (i // 18, i % 18)
 xy2i = lambda x, y: x * 18 + y
