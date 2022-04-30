@@ -10,7 +10,7 @@ Run the program using the command `py img2gbc.py`. The program will ask for the 
 
 To insert the palette data, first create 8 palettes in GB Studio. Next, choose those palettes to use in your scene. Then, open the .gbsproj project file in a text editor, find the names of those palettes, and insert the palette data in the `"colors"` array of each palette, then find the scene and insert the colorization data in the `"tileColors"` array.
 
-Results can vary depending on the image and method used. Method A is fast but can be inaccurate, method B is like method A but blockier and with more accurate colors, method C is the slowest and works better on images with not many colors, and methods D and E are the fastest and work better on images with many colors (D works well on grayscale images though). You are welcome to help optimize the program or add more accurate methods that are less blocky.
+Results can vary depending on the image and method used. Method A is fast but can be inaccurate, method B is like method A but blockier and with more accurate colors, method C is the slowest and works better on images with not many colors, methods D and E are the fastest and work better on images with many colors (D works well on grayscale images though), and method F is a bit slower variation of method D. You are welcome to help optimize the program or add more accurate methods that are less blocky.
 
 ## Examples
 |Input|Output|
