@@ -71,11 +71,10 @@ with Image.open(file) as im:
         tiles4[i] = tiles4[i].quantize(4).convert('RGB')
 
     # natural selection (closest palettes get merged)
-    tilegroups = [] # replace with [[i] for i in range(360)] and delete round 1 to go directly to round 2
+    tilegroups = [] # replace with [[i] for i in range(360)] and delete round 1 to go directly to round 2 for methods ABC
     
     if method in 'DE':
         # choose 8 tiles whose palettes are farthest from each other
-        #tilegroups = [sorted([(c, min([paldist(i, j) for j in tiles4])) for c, i in enumerate(tiles4)], key=i1)[-1][0]] # find most unique tile palette (use range(7) instead of range(6))
         tilegroups = sorted(flat([[([c, c2], paldist(i, j)) for c2, j in enumerate(tiles4) if j != i] for c, i in enumerate(tiles4)]), key=i1)[-1][0]
         for i in range(6): tilegroups.append(sorted([(x, min([paldist(tiles4[j], tiles4[x]) for j in tilegroups])) for x in range(360) if x not in tilegroups], key=i1)[-1][0])
         
@@ -121,23 +120,6 @@ with Image.open(file) as im:
                 tilegroups = tg
                 print(len(tilegroups) - 8, 'cycles left')
             elif method == 'C':
-                '''
-                incredibly slow method that stops at a certain number of groups
-
-                tl = sorted(range(360), key=lambda x: min([paldist(tiles4[x], realpal(groupimg(i)).convert('RGB')) for i in [y for y in tilegroups if x not in y]]))
-                tl = [z for z in tl if z not in moved][0]
-
-                moved.append(tl)
-                if len(moved) == 360: moved = []
-
-                # put tiles in the closest group that is not their own
-                gr = sorted([[tilegroups.index(i), paldist(tiles4[tl], realpal(groupimg(i)).convert('RGB'))] for i in [y for y in tilegroups if tl not in y]], key=i1)[0][0]
-                tilegroups = [[j for j in i if j != tl] for i in tilegroups]
-                tilegroups[gr].append(tl)
-
-                tilegroups = [i for i in tilegroups if i]
-                '''
-
                 # group x group, works better on images with less colors
                 tg = tilegroups.copy()
                 tilegroups.sort(key=lambda x: min([paldist(groupimg(x), groupimg(i)) for i in [y for y in tg if x not in y]]))
@@ -146,9 +128,6 @@ with Image.open(file) as im:
                 for i in tl:
                     tilegroups.sort(key=lambda x: paldist(groupimg(x), tiles4[i]))
                     tilegroups[0].append(i)
-
-                #tilegroups.sort(key=lambda x: paldist(groupimg(x), groupimg(tl)))
-                #tilegroups[0] += tl
 
                 print(len(tilegroups) - 8, 'cycles left')
         
