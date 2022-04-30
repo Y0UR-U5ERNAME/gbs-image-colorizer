@@ -48,8 +48,8 @@ flat = lambda z: [x for y in z for x in y]
 
 # program start
 file = input('File Location: ')
-method = input('Method (A, B, C, D, or E): ').upper()
-if method not in ['A', 'B', 'C', 'D', 'E']: method = 'A'; print('Defaulting to method A')
+method = input('Method (A, B, C, D, E, or F): ').upper()
+if method not in ['A', 'B', 'C', 'D', 'E', 'F']: method = 'A'; print('Defaulting to method A')
 
 start = time.time()
 
@@ -88,6 +88,23 @@ with Image.open(file) as im:
                 tilegroups[sorted([(c, paldist(tiles4[j[0]] if method == 'E' else groupimg(j), tiles4[i])) for c, j in enumerate(tilegroups)], key=i1)[0][0]].append(i)
 
         print('Done with round 2')
+    elif method == 'F':
+        # choose 8 tiles whose palettes are farthest from each other
+        def fp(p):
+            return sorted(flat([[([c, c2], paldist(i, j)) for c2, j in enumerate(p) if j != i] for c, i in enumerate(p)]), key=i1)[-1][0]
+
+        def split(C, n=0):
+            if len(C) < 2: return [[C], [C]]
+            s = fp([i[1] for i in C])
+
+            r = [[(a, i) for a, i in C if paldist(i, C[s[0]][1]) < paldist(i, C[s[1]][1])]]
+            r.append([(a, i) for a, i in C if (a, i) not in r[0]])
+            
+            if n < 2: return [split(i, n + 1) for i in r]
+            return r
+        
+        tilegroups = flat(flat(split(tuple(enumerate(tiles4)))))
+        tilegroups = [[j[0] for j in i] for i in tilegroups]
     else:
         # round 1 (tile x tile)
         for t in sorted([[c, sorted([[c2, paldist(i, j)] for c2, j in enumerate(tiles4)], key=i1)[1]] for c, i in enumerate(tiles4)], key=i1):
